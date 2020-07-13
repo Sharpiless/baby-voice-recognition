@@ -1,0 +1,3 @@
+data_all.py and data_test.py: before implementation, manually create train and test directory, inside train, create directories with label names and put audio files into it.
+
+model.py model.load_weights is not for 1st time implementation.
