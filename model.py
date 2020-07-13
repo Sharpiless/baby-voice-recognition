@@ -64,9 +64,9 @@ model.compile(loss='categorical_crossentropy',
 batch_size = 256
 steps = len(train_x) // batch_size
 
-model.load_weights('./my_model.h5')
+#model.load_weights('./my_model.h5')
 
-model.fit(x=train_x, y=train_y, batch_size=batch_size,
+history = model.fit(x=train_x, y=train_y, batch_size=batch_size,
           epochs=400, validation_split=0.1, shuffle=True)
 
 model.save('./my_model.h5')
