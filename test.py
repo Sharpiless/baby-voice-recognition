@@ -31,7 +31,7 @@ for key, value in tqdm(raw_data.items()):
 
     pred = LABELS[np.argmax(y)]
 
-    result['id'].append(key.split('\\')[-1])
+    result['id'].append(os.path.split(key)[-1])
     result['label'].append(pred)
 
 result = pd.DataFrame(result)
