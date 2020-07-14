@@ -67,12 +67,16 @@ for file, lbl in tqdm(file_glob):
     seg = sr * 5
     length = raw.shape[0]
     for i in range((length//seg)*3+1):
+        # seg/3 means "walk length = segment length/3"
         start = i * int(seg/3)
         end = start + seg
+        # if end index is out of bound of the raw waveform, BUT THIS DOESN'T EFFECT LIST INDEX, SO THESE TWO LINES CAN BE DELETED
         if end > length:
             end = length
+        # Only if selected portion is larger than 2 seconds: "end" CAN BE CHANGE TO "length"
         if end - start > sr * 2:
             x = raw[start:end]
+        # break is optional, if we indent the lines after break.
         else:
             break
         y = np.zeros(N_CLASS)
