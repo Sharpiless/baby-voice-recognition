@@ -38,24 +38,26 @@ if __name__ == '__main__':
     model.add(layers.Conv1D(32, 3, input_shape=(train_x.shape[1], train_x.shape[2]),
                             kernel_regularizer=regularizers.l2(1e-7),
                             activity_regularizer=regularizers.l1(1e-7)))
-    model.add(layers.ReLU())
-    model.add(layers.Conv1D(32, 3, strides=1,
-                            kernel_regularizer=regularizers.l2(1e-7),
-                            activity_regularizer=regularizers.l1(1e-7)))
-    model.add(layers.ReLU())
-    model.add(layers.MaxPool1D(pool_size=2))
-    model.add(layers.Bidirectional(layers.LSTM(
-        64, dropout=0.5, return_sequences=True,
-        kernel_regularizer=regularizers.l2(1e-7),
-        activity_regularizer=regularizers.l1(1e-7))))
-    model.add(layers.Bidirectional(layers.LSTM(
-        64, dropout=0.5, return_sequences=True,
-        kernel_regularizer=regularizers.l2(1e-7),
-        activity_regularizer=regularizers.l1(1e-7))))
-    model.add(layers.ReLU())
-    model.add(layers.LSTM(64,
-                          kernel_regularizer=regularizers.l2(1e-7),
-                          activity_regularizer=regularizers.l1(1e-7)))
+    model.add(layers.Conv1D(64, 3, activation='elu',
+                    kernel_regularizer=regularizers.l1_l2(1e-7)))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPool1D())
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Conv1D(64, 3, activation='elu',
+                    kernel_regularizer=regularizers.l1_l2(1e-7)))
+    model.add(layers.Conv1D(64, 3, activation='elu',
+                    kernel_regularizer=regularizers.l1_l2(1e-7)))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPool1D())
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Bidirectional(layers.LSTM(128, dropout=0.5, return_sequences=True,
+                    kernel_regularizer=regularizers.l1_l2(1e-7))))
+    model.add(layers.Bidirectional(layers.LSTM(128, dropout=0.5, return_sequences=True,
+                    kernel_regularizer=regularizers.l1_l2(1e-7))))
+    model.add(layers.LSTM(128,
+                    kernel_regularizer=regularizers.l1_l2(1e-7)))
+    model.add(layers.Dense(128, activation='elu',
+                    kernel_regularizer=regularizers.l1_l2(1e-7)))
     model.add(layers.Dropout(0.5))
     model.add(layers.Dense(cfg.N_CLASS, activation="softmax"))
     model.summary()
