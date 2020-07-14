@@ -38,7 +38,7 @@ if __name__ == '__main__':
                 x = raw[start:end]
             else:
                 break
-            x = extract_logmel(x, sr)
+            x = extract_logmel(x, sr, size=cfg.TIME_SEG)
             temp.append(x)
         data[file] = np.array(temp)
 
