@@ -34,23 +34,28 @@ if __name__ == '__main__':
 
     print(train_x.shape)
 
-
     model = Sequential()
-    model.add(layers.Conv1D(32, 3, input_shape=(24, 60),
-                    kernel_regularizer=regularizers.l2(1e-7),
-                    activity_regularizer=regularizers.l1(1e-7)))
-    model.add(GaussianNoise(0.1))
+    model.add(layers.Conv1D(32, 3, input_shape=(train_x.shape[1], train_x.shape[2]),
+                            kernel_regularizer=regularizers.l2(1e-7),
+                            activity_regularizer=regularizers.l1(1e-7)))
+    model.add(layers.ReLU())
+    model.add(layers.Conv1D(32, 3, strides=1,
+                            kernel_regularizer=regularizers.l2(1e-7),
+                            activity_regularizer=regularizers.l1(1e-7)))
+    model.add(layers.ReLU())
+    model.add(layers.MaxPool1D(pool_size=2))
     model.add(layers.Bidirectional(layers.LSTM(
         64, dropout=0.5, return_sequences=True,
-                    kernel_regularizer=regularizers.l2(1e-7),
-                    activity_regularizer=regularizers.l1(1e-7))))
+        kernel_regularizer=regularizers.l2(1e-7),
+        activity_regularizer=regularizers.l1(1e-7))))
     model.add(layers.Bidirectional(layers.LSTM(
         64, dropout=0.5, return_sequences=True,
-                    kernel_regularizer=regularizers.l2(1e-7),
-                    activity_regularizer=regularizers.l1(1e-7))))
+        kernel_regularizer=regularizers.l2(1e-7),
+        activity_regularizer=regularizers.l1(1e-7))))
+    model.add(layers.ReLU())
     model.add(layers.LSTM(64,
-                    kernel_regularizer=regularizers.l2(1e-7),
-                    activity_regularizer=regularizers.l1(1e-7)))
+                          kernel_regularizer=regularizers.l2(1e-7),
+                          activity_regularizer=regularizers.l1(1e-7)))
     model.add(layers.Dropout(0.5))
     model.add(layers.Dense(cfg.N_CLASS, activation="softmax"))
     model.summary()
@@ -58,15 +63,15 @@ if __name__ == '__main__':
     adam = keras.optimizers.adam(2e-4)
 
     model.compile(loss='categorical_crossentropy',
-                optimizer=adam, metrics=['accuracy'])
+                  optimizer=adam, metrics=['accuracy'])
 
     # Train model on dataset
     batch_size = cfg.BATCH_SIZE
     steps = len(train_x) // batch_size
 
-    model.load_weights('./my_model.h5')
+    # model.load_weights('./my_model.h5')
 
     model.fit(x=train_x, y=train_y, batch_size=batch_size,
-            epochs=cfg.EPOCHES, validation_split=0.1, shuffle=True)
+              epochs=cfg.EPOCHES, validation_split=0.1, shuffle=True)
 
     model.save('./my_model.h5')
