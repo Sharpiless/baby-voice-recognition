@@ -2,6 +2,10 @@
 
 
 ##### setup train and test directories
+echo "Caution: this will delete all input folder, but don't worry, will also generate a new one from the .rar data"
+read -p 'Just Press Enter to confirm: ' anyinput
+
+rm -r input
 
 mkdir input
 mv *.rar input
@@ -33,12 +37,15 @@ mkdir eda/1600/hug eda/1600/hungry eda/1600/uncomfortable eda/1600/sleepy eda/16
 
 cd ..
 
+### Dealing with sampling rate problem
 # MOVE 1600 Hz sampling rate .wav files to corresponding folder
+
+# convert all .wav file from 44100 Hz -> 16000 Hz,
+# and concatenate all .wav to a single file for the same label
 
 python3 move_1600.py
 
 # seperate 10 (.wav files, randomly chosen) * 6 (classes) into folder input/val for validation
 
 python3 move_val.py
-
 
