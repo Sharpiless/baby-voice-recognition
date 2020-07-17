@@ -2,7 +2,7 @@ LABELS = ['awake', 'diaper', 'hug', 'hungry', 'sleepy', 'uncomfortable'] # 标�
 
 N_CLASS = len(LABELS) # 类别数
 
-TIME_SEG = 5 # 5s间隔
+TIME_SEG = 3 # 5s间隔
 
 STRIDE = 3 # 1/3的滑窗长度步长
 

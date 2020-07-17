@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
         raw, sr = get_wave_norm(file)
         length = raw.shape[0]
-        seg = sr * 5
+        seg = sr * cfg.TIME_SEG
         for i in range((length//seg)*cfg.STRIDE+1):
             start = i * int(seg/cfg.STRIDE)
             end = start + seg
