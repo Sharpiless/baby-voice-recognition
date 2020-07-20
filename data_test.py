@@ -34,7 +34,7 @@ if __name__ == '__main__':
             end = start + seg
             if end > length:
                 end = length
-            if end - start > sr * 2:
+            if end - start > sr * 1:
                 x = raw[start:end]
             else:
                 break

@@ -35,34 +35,32 @@ if __name__ == '__main__':
     print(train_x.shape)
 
     model = Sequential()
-    model.add(layers.Conv1D(32, 3, input_shape=(train_x.shape[1], train_x.shape[2]),
+    model.add(layers.Conv1D(32*2, 3, input_shape=(train_x.shape[1], train_x.shape[2]),
                             kernel_regularizer=regularizers.l2(1e-7),
                             activity_regularizer=regularizers.l1(1e-7)))
-    model.add(layers.Conv1D(64, 3, activation='elu',
+    model.add(GaussianNoise(0.1))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Conv1D(32*2, 3, activation='elu',
                     kernel_regularizer=regularizers.l1_l2(1e-7)))
     model.add(layers.BatchNormalization())
     model.add(layers.MaxPool1D())
+    model.add(GaussianNoise(0.1))
     model.add(layers.Dropout(0.5))
-    model.add(layers.Conv1D(64, 3, activation='elu',
-                    kernel_regularizer=regularizers.l1_l2(1e-7)))
-    model.add(layers.Conv1D(64, 3, activation='elu',
-                    kernel_regularizer=regularizers.l1_l2(1e-7)))
-    model.add(layers.BatchNormalization())
-    model.add(layers.MaxPool1D())
-    model.add(layers.Dropout(0.5))
-    model.add(layers.Bidirectional(layers.LSTM(128, dropout=0.5, return_sequences=True,
+    model.add(layers.Bidirectional(layers.LSTM(32*4, dropout=0.5, return_sequences=True,
                     kernel_regularizer=regularizers.l1_l2(1e-7))))
-    model.add(layers.Bidirectional(layers.LSTM(128, dropout=0.5, return_sequences=True,
+    model.add(GaussianNoise(0.1))
+    model.add(layers.Bidirectional(layers.LSTM(32*4, dropout=0.5, return_sequences=True,
                     kernel_regularizer=regularizers.l1_l2(1e-7))))
-    model.add(layers.LSTM(128,
+    model.add(layers.LSTM(32*2,
                     kernel_regularizer=regularizers.l1_l2(1e-7)))
-    model.add(layers.Dense(128, activation='elu',
+    model.add(GaussianNoise(0.1))
+    model.add(layers.Dense(16*2, activation='elu',
                     kernel_regularizer=regularizers.l1_l2(1e-7)))
     model.add(layers.Dropout(0.5))
     model.add(layers.Dense(cfg.N_CLASS, activation="softmax"))
     model.summary()
 
-    adam = keras.optimizers.adam(2e-4)
+    adam = keras.optimizers.adam(2e-5)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=adam, metrics=['accuracy'])
@@ -73,7 +71,7 @@ if __name__ == '__main__':
 
     # model.load_weights('./my_model.h5')
 
-    history = model.fit(x=train_x, y=train_y, batch_size=batch_size,
+    model.fit(x=train_x, y=train_y, batch_size=batch_size,
               epochs=cfg.EPOCHES, validation_split=0.1, shuffle=True)
 
     model.save('./my_model.h5')
