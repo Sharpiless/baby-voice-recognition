@@ -48,4 +48,14 @@ for f in fs:
         shutil.move(new_filename,f)
         print('44100 to 16000------------')
         print('move from',new_filename,'to',f)
+    ### moving sr ==1600 may not be as good as expected!
+    if sr == 1600:
+        new_filename = f[:-4] + '_new' + '.wav'
+        y,sr = librosa.load(f,sr=16000)
+        soundfile.write(new_filename,y,sr)
+        print('write new file: ',new_filename)
+        shutil.move(new_filename,f)
+        print('1600 to 16000------------')
+        print('move from',new_filename,'to',f)
+
 
