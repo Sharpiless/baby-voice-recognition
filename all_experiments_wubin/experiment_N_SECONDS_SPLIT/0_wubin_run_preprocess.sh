@@ -49,3 +49,5 @@ python3 move_1600.py
 
 python3 move_val.py
 
+# run exp
+python3 -i exp_duration.py

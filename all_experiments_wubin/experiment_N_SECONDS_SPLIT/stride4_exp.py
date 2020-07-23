@@ -35,8 +35,29 @@ def extract_logmel(y, sr, size):
 
 
 def get_wave_norm(file):
-    data, framerate = librosa.load(file, sr=cfg.SR)
-    return data, framerate
+    data, sr = librosa.load(file, sr=cfg.SR)
+    
+    ####### this +0.3 from 0.51 -> 0.54
+    # add trim for comparison
+    y2, idx = librosa.effects.trim(data)
+    # add hpss for comparison
+    h,p = librosa.effects.hpss(y2)
+    ####### great code
+    
+    ## more experiment below: this doesn't improve a lot, instead it goes from 0.535 back to 0.49, and there exist file test_210.wav empty error, solved manually by replacing this file with some other 1 file. Also, this may work but you may add in extra time difference information and also take in to account: examine each file processed result, also, experiment more on this, e.g. .2 seconds or something else.
+    # split using librosa, using harmonic component
+    yhs = librosa.effects.split(h,top_db=30,hop_length=64)
+    select = np.diff(yhs/sr)>.15
+    select_audio = np.array([],dtype=h.dtype)
+    for i in range(select.shape[0]):
+        if select[i][0]:
+            temp_y = h[yhs[i][0]:yhs[i][1]]
+            new = np.concatenate([select_audio,temp_y])
+            select_audio = new
+
+
+    data = select_audio
+    return data, sr
 
 ### end of functions of data_all.py
 ### model.py imports
@@ -54,11 +75,29 @@ import config as cfg
 import json
 
 ### end of model.py
+### test.py imports
+import keras.backend as K
+from keras import regularizers
+from keras import layers
+from keras.models import Sequential
+import keras
+import os
+import wave
+import numpy as np
+import pickle as pkl
+
+from tqdm import tqdm
+import pandas as pd
+
+from keras.models import load_model
+import config as cfg
+
+### end of test.py imports
 
 # for constants
-start = 1.39
-end = 1.41
-increment = 0.005
+start = 1.40#0.5#1.39
+end = 1.45#10.5#1.41
+increment = 0.1#0.005
 for duration in np.arange(start,end,increment):
     cfg.TIME_SEG = duration
     ### data_all.py
@@ -173,23 +212,38 @@ for duration in np.arange(start,end,increment):
     ### model.py
     with open('./data.pkl', 'rb') as f:
         raw_data = pkl.load(f)
+    with open('./data_val.pkl', 'rb') as f:
+        raw_data_val = pkl.load(f)
 
     raw_x = []
     raw_y = []
 
+    raw_x_val = []
+    raw_y_val = []
+
     for x, y in raw_data:
         raw_x.append(x)
         raw_y.append(y)
+    for x, y in raw_data_val:
+        raw_x_val.append(x)
+        raw_y_val.append(y)
+
 
     np.random.seed(5)
     np.random.shuffle(raw_x)
+    np.random.shuffle(raw_x_val)
+
     np.random.seed(5)
     np.random.shuffle(raw_y)
+    np.random.shuffle(raw_y_val)
 
     print(len(raw_x), raw_x[0].shape)
+    print(len(raw_x_val), raw_x_val[0].shape)
 
     train_x = np.array(raw_x)
+    val_x = np.array(raw_x_val)
     train_y = np.array(raw_y)
+    val_y = np.array(raw_y_val)
 
     print(train_x.shape)
 
@@ -231,7 +285,7 @@ for duration in np.arange(start,end,increment):
     # model.load_weights('./my_model.h5')
 
     history = model.fit(x=train_x, y=train_y, batch_size=batch_size,
-              epochs=cfg.EPOCHES, validation_split=0.1, shuffle=True)
+              epochs=cfg.EPOCHES, validation_data=(val_x,val_y), shuffle=True)
 
     model.save('./my_model.h5')
     # may be used with "with open xxx"
@@ -240,3 +294,26 @@ for duration in np.arange(start,end,increment):
     # data = json.load( open('fit_history_duration_{}.json'.format(duration)))
 
     ### end of model.py
+
+    ### test.py
+    with open('./data_test.pkl', 'rb') as f:
+        raw_data = pkl.load(f)
+
+    #model = load_model('my_model.h5')
+
+    result = {'id': [], 'label': []}
+
+    for key, value in tqdm(raw_data.items()):
+
+        x = np.array(value)
+        y = model.predict(x)
+        y = np.mean(y, axis=0)
+
+        pred = cfg.LABELS[np.argmax(y)]
+
+        result['id'].append(os.path.split(key)[-1])
+        result['label'].append(pred)
+
+    result = pd.DataFrame(result)
+    result.to_csv('./submission.csv', index=False)
+    ### end of test.py
