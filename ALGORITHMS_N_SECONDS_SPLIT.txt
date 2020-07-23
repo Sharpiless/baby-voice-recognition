@@ -1,3 +1,0 @@
-Algorithms to spilt n seconds duration:
-
-for each split from 0 to M=10 seconds, with time increment dM=0.5 second, save the 'acc' and 'val_acc' lists and the duration of seconds of split. Checkout the best val_acc.
