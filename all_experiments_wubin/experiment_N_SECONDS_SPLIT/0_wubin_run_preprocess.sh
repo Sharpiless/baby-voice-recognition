@@ -89,3 +89,6 @@ python3 move_val.py
 
 # run exp
 #python3 -i exp_duration.py
+
+# run trim_split_sox
+python3 -i trim_split_sox.py
