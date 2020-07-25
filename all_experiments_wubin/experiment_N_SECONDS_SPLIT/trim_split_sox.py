@@ -2,6 +2,7 @@ from tqdm import tqdm
 import librosa
 import soundfile
 import os
+import numpy as np
 def load_trim_split_save(src_path,dst_path):
     fs = librosa.util.find_files(src_path)
     for f in tqdm(fs):
