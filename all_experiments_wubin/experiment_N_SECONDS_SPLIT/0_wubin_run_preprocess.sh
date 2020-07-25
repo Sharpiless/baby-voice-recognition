@@ -35,6 +35,44 @@ mkdir eda/1600
 
 mkdir eda/1600/hug eda/1600/hungry eda/1600/uncomfortable eda/1600/sleepy eda/1600/diaper eda/1600/awake
 
+mkdir eda/trimmed
+mkdir eda/trimmed/train
+mkdir eda/trimmed/train/hug
+mkdir eda/trimmed/train/hungry
+mkdir eda/trimmed/train/sleepy
+mkdir eda/trimmed/train/uncomfortable
+mkdir eda/trimmed/train/awake
+mkdir eda/trimmed/train/diaper
+
+mkdir eda/trimmed/test
+mkdir eda/trimmed/val
+mkdir eda/trimmed/val/hug
+mkdir eda/trimmed/val/hungry
+mkdir eda/trimmed/val/sleepy
+mkdir eda/trimmed/val/uncomfortable
+mkdir eda/trimmed/val/awake
+mkdir eda/trimmed/val/diaper
+
+
+mkdir eda/orig_concat_trim
+mkdir eda/orig_concat_trim/train
+mkdir eda/orig_concat_trim/train/hug
+mkdir eda/orig_concat_trim/train/hungry
+mkdir eda/orig_concat_trim/train/awake
+mkdir eda/orig_concat_trim/train/sleepy
+mkdir eda/orig_concat_trim/train/uncomfortable
+mkdir eda/orig_concat_trim/train/diaper
+mkdir eda/orig_concat_trim/test
+mkdir eda/orig_concat_trim/val
+mkdir eda/orig_concat_trim/val/hug
+mkdir eda/orig_concat_trim/val/hungry
+mkdir eda/orig_concat_trim/val/awake
+mkdir eda/orig_concat_trim/val/sleepy
+mkdir eda/orig_concat_trim/val/uncomfortable
+mkdir eda/orig_concat_trim/val/diaper
+mkdir eda/orig_concat_trim/test
+
+
 cd ..
 
 ### Dealing with sampling rate problem
@@ -50,4 +88,4 @@ python3 move_1600.py
 python3 move_val.py
 
 # run exp
-python3 -i exp_duration.py
+#python3 -i exp_duration.py
