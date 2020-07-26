@@ -35,13 +35,13 @@ def extract_logmel(y, sr, size):
 
 
 def get_wave_norm(file):
-    data, sr = librosa.load(file, sr=cfg.SR)
+    y, sr = librosa.load(file, sr=cfg.SR)
     
     ####### this +0.3 from 0.51 -> 0.54
     # add trim for comparison
-    y2, idx = librosa.effects.trim(data)
-    # add hpss for comparison
-    h,p = librosa.effects.hpss(y2)
+    y_trimmed, idx = librosa.effects.trim(y)
+    # add hpss for comparison, use harmonic (h)
+    h,p = librosa.effects.hpss(y_trimmed)
     ####### great code
     
     ## more experiment below: this doesn't improve a lot, instead it goes from 0.535 back to 0.49, and there exist file test_210.wav empty error, solved manually by replacing this file with some other 1 file. Also, this may work but you may add in extra time difference information and also take in to account: examine each file processed result, also, experiment more on this, e.g. .2 seconds or something else.
@@ -58,6 +58,9 @@ def get_wave_norm(file):
 
     data = select_audio
     return data, sr
+
+
+
 
 ### end of functions of data_all.py
 ### model.py imports
