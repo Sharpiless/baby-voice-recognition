@@ -72,6 +72,14 @@ mkdir eda/orig_concat_trim/val/uncomfortable
 mkdir eda/orig_concat_trim/val/diaper
 mkdir eda/orig_concat_trim/test
 
+mkdir eda/mel_samples
+mkdir eda/mel_samples/hug
+mkdir eda/mel_samples/hungry
+mkdir eda/mel_samples/uncomfortable
+mkdir eda/mel_samples/awake
+mkdir eda/mel_samples/sleepy
+mkdir eda/mel_samples/diaper
+
 
 cd ..
 
