@@ -99,4 +99,7 @@ python3 move_val.py
 #python3 -i exp_duration.py
 
 # run trim_split_sox
-python3 -i trim_split_sox.py
+python3 trim_split_sox.py
+
+# for visualization, move mel samples
+python3 move_mel_samples.py
