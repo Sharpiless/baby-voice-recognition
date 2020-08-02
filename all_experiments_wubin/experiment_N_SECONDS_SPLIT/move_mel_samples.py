@@ -9,6 +9,7 @@ import soundfile
 from tqdm import tqdm
 
 NUM_SAMPLES = 10
+NUM_SAMPLES_TEST = 30
 
 def get_files(path):
     fs = librosa.util.find_files(path)
@@ -37,18 +38,31 @@ for d in train_dirs:
     print(class_dir)
     fs = get_files(class_dir)
     for f in fs[:NUM_SAMPLES]:
-         dst = cwd/'input/eda/mel_samples'/d
+         dst = cwd/'input/eda/mel_samples/train'/d
          shutil.copy(f,dst)
          print('Copied ',f,'into',dst,'!')
+# now for test
+test_dir = cwd/'input/test'
+fs = get_files(test_dir)
+for f in fs[:NUM_SAMPLES_TEST]:
+    dst = cwd/'input/eda/mel_samples/test'
+    shutil.copy(f,dst)
+    print('Copied ',f,'into',dst,'!')
 
-## generate mels and save png
-mel_samples_dirs = os.listdir('input/eda/mel_samples')
+
+## for train: generate mels and save png
+mel_samples_dirs = os.listdir('input/eda/mel_samples/train')
 for d in mel_samples_dirs:
-    class_dir = cwd/'input/eda/mel_samples'/d
+    class_dir = cwd/'input/eda/mel_samples/train'/d
     print(class_dir)
     fs = get_files(class_dir)
     for f in tqdm(fs):
         gen_save(f)
+# for test now
+class_dir = cwd/'input/eda/mel_samples/test'
+fs = get_files(class_dir)
+for f in tqdm(fs):
+    gen_save(f)
 
 '''
 # for test data:
