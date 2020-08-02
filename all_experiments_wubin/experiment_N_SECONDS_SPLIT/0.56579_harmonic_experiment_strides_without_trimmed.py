@@ -103,7 +103,7 @@ import config as cfg
 
 # for constants
 start = 1.4#1.385#0.5#1.39
-end = 1.5#1.390#10.5#1.41
+end = 1.41#1.390#10.5#1.41
 increment = 0.1#0.005#0.005
 for duration in np.arange(start,end,increment):
     cfg.TIME_SEG = duration
