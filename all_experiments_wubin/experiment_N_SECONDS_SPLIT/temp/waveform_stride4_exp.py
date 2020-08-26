@@ -27,29 +27,28 @@ def extract_logmel(y, sr, size):
         y = new_y
 
     # extract log mel spectrogram #####
-    melspectrogram = librosa.feature.melspectrogram(
-        y=y, sr=sr, n_fft=2048, hop_length=1024, n_mels=cfg.N_MEL)
-    logmelspec = librosa.power_to_db(melspectrogram)
+    #melspectrogram = librosa.feature.melspectrogram(
+    #    y=y, sr=sr, n_fft=2048, hop_length=1024, n_mels=cfg.N_MEL)
+    #logmelspec = librosa.power_to_db(melspectrogram)
 
-    return logmelspec.T
+    #return logmelspec.T
+    return y
 
 
 def get_wave_norm(file):
-    y, sr = librosa.load(file, sr=cfg.SR)
+    data, sr = librosa.load(file, sr=cfg.SR)
     
     ####### this +0.3 from 0.51 -> 0.54
     # add trim for comparison
-    y_trimmed, idx = librosa.effects.trim(y)
+    y2, idx = librosa.effects.trim(data)
     # add hpss for comparison, use harmonic (h)
-    h,p = librosa.effects.hpss(y_trimmed)
+    h,p = librosa.effects.hpss(y2)
     ####### great code
     
     ## more experiment below: this doesn't improve a lot, instead it goes from 0.535 back to 0.49, and there exist file test_210.wav empty error, solved manually by replacing this file with some other 1 file. Also, this may work but you may add in extra time difference information and also take in to account: examine each file processed result, also, experiment more on this, e.g. .2 seconds or something else.
     # split using librosa, using harmonic component
-    
-    '''
     yhs = librosa.effects.split(h,top_db=30,hop_length=64)
-    select = np.diff(yhs/sr)>.15
+    select = np.diff(yhs/sr)>.2
     select_audio = np.array([],dtype=h.dtype)
     for i in range(select.shape[0]):
         if select[i][0]:
@@ -59,11 +58,7 @@ def get_wave_norm(file):
 
 
     data = select_audio
-    '''
-    return h, sr
-
-
-
+    return data, sr
 
 ### end of functions of data_all.py
 ### model.py imports

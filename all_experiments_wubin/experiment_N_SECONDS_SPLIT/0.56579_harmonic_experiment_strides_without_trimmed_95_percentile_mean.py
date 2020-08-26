@@ -39,7 +39,8 @@ def get_wave_norm(file):
     
     ####### this +0.3 from 0.51 -> 0.54
     # add trim for comparison
-    y_trimmed, idx = librosa.effects.trim(y)
+    #y_trimmed, idx = librosa.effects.trim(y)
+    y_trimmed = y.copy()
     # add hpss for comparison, use harmonic (h)
     h,p = librosa.effects.hpss(y_trimmed)
     ####### great code
@@ -101,9 +102,9 @@ import config as cfg
 ### end of test.py imports
 
 # for constants
-start = 1.40#0.5#1.39
-end = 1.45#10.5#1.41
-increment = 0.1#0.005
+start = 1.4#1.385#0.5#1.39
+end = 1.41#1.390#10.5#1.41
+increment = 0.1#0.005#0.005
 for duration in np.arange(start,end,increment):
     cfg.TIME_SEG = duration
     ### data_all.py
@@ -313,9 +314,18 @@ for duration in np.arange(start,end,increment):
 
         x = np.array(value)
         y = model.predict(x)
-        y = np.mean(y, axis=0)
-
-        pred = cfg.LABELS[np.argmax(y)]
+        thres = np.percentile(y,95,axis=0)
+        above_mean = y> thres
+        ans = y * above_mean
+        #ye = np.mean(y, axis=0)
+        yel = []
+        for i in range(y.shape[1]):
+            total_weight = (ans[:,i] !=0).sum()
+            total = sum(ans[:,i])
+            avg = total/total_weight
+            yel.append(avg)
+        ye = np.array(yel)
+        pred = cfg.LABELS[np.argmax(ye)]
 
         result['id'].append(os.path.split(key)[-1])
         result['label'].append(pred)

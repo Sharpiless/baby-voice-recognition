@@ -47,8 +47,8 @@ def get_wave_norm(file):
     ## more experiment below: this doesn't improve a lot, instead it goes from 0.535 back to 0.49, and there exist file test_210.wav empty error, solved manually by replacing this file with some other 1 file. Also, this may work but you may add in extra time difference information and also take in to account: examine each file processed result, also, experiment more on this, e.g. .2 seconds or something else.
     # split using librosa, using harmonic component
     
-    '''
-    yhs = librosa.effects.split(h,top_db=30,hop_length=64)
+    
+    yhs = librosa.effects.split(h,top_db=40,frame_length=1024*8,hop_length=1024*4)
     select = np.diff(yhs/sr)>.15
     select_audio = np.array([],dtype=h.dtype)
     for i in range(select.shape[0]):
@@ -56,11 +56,12 @@ def get_wave_norm(file):
             temp_y = h[yhs[i][0]:yhs[i][1]]
             new = np.concatenate([select_audio,temp_y])
             select_audio = new
-
-
-    data = select_audio
-    '''
-    return h, sr
+    if len(select_audio) >= sr * cfg.TIME_SEG:
+        data = select_audio
+    elif len(select_audio) < sr * cfg.TIME_SEG:
+        data = h
+    
+    return data, sr
 
 
 
@@ -101,9 +102,9 @@ import config as cfg
 ### end of test.py imports
 
 # for constants
-start = 1.40#0.5#1.39
-end = 1.45#10.5#1.41
-increment = 0.1#0.005
+start = 1.4#1.385#0.5#1.39
+end = 1.5#1.390#10.5#1.41
+increment = 0.1#0.005#0.005
 for duration in np.arange(start,end,increment):
     cfg.TIME_SEG = duration
     ### data_all.py

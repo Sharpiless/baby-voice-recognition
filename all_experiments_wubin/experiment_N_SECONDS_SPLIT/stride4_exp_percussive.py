@@ -60,7 +60,7 @@ def get_wave_norm(file):
 
     data = select_audio
     '''
-    return h, sr
+    return p, sr
 
 
 

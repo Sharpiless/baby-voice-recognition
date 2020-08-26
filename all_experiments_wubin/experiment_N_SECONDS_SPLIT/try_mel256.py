@@ -39,7 +39,8 @@ def get_wave_norm(file):
     
     ####### this +0.3 from 0.51 -> 0.54
     # add trim for comparison
-    y_trimmed, idx = librosa.effects.trim(y)
+    #y_trimmed, idx = librosa.effects.trim(y)
+    y_trimmed = y.copy()
     # add hpss for comparison, use harmonic (h)
     h,p = librosa.effects.hpss(y_trimmed)
     ####### great code
@@ -101,13 +102,13 @@ import config as cfg
 ### end of test.py imports
 
 # for constants
-start = 1.40#0.5#1.39
-end = 1.45#10.5#1.41
-increment = 0.1#0.005
+start = 1.4#1.385#0.5#1.39
+end = 1.41#1.390#10.5#1.41
+increment = 0.1#0.005#0.005
 for duration in np.arange(start,end,increment):
     cfg.TIME_SEG = duration
     ### data_all.py
-    if True:#not os.path.isfile('data.pkl'):
+    if 0:#True:#not os.path.isfile('data.pkl'):
         DATA_DIR = './input/train'
 
         file_glob = []
@@ -144,7 +145,7 @@ for duration in np.arange(start,end,increment):
             pkl.dump(data, f)
     ### end of data_all.py
     ### data_test.py
-    if True:#not os.path.isfile('data_test.pkl'):
+    if 0:#True:#not os.path.isfile('data_test.pkl'):
         DATA_DIR = './input/test'
 
         file_glob = []
@@ -179,7 +180,7 @@ for duration in np.arange(start,end,increment):
             pkl.dump(data, f)
     ### end of data_test.py
     ### data_val.py
-    if True:#not os.path.isfile('data_val.pkl'):
+    if 0:#True:#not os.path.isfile('data_val.pkl'):
         DATA_DIR = './input/val'
 
         file_glob = []
@@ -279,7 +280,7 @@ for duration in np.arange(start,end,increment):
     model.add(layers.Dense(cfg.N_CLASS, activation="softmax"))
     model.summary()
 
-    adam = keras.optimizers.adam(2e-5)
+    adam = keras.optimizers.adam(2e-5*2)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=adam, metrics=['accuracy'])

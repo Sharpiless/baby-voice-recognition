@@ -34,12 +34,28 @@ def extract_logmel(y, sr, size):
     return logmelspec.T
 
 
+def extract_mfcc(y,sr,size):
+    # normalization
+    y = y.astype(np.float32)
+    normalization_factor = 1 / np.max(np.abs(y))
+    y = y * normalization_factor
+
+    # random crop
+    if len(y) <= size * sr:
+        new_y = np.zeros((int(size * sr)+1, ))
+        new_y[:len(y)] = y
+        y = new_y
+
+    mfccs = librosa.feature.mfcc(y,sr,n_mfcc=40)
+    return mfccs.T
+
 def get_wave_norm(file):
     y, sr = librosa.load(file, sr=cfg.SR)
     
     ####### this +0.3 from 0.51 -> 0.54
     # add trim for comparison
-    y_trimmed, idx = librosa.effects.trim(y)
+    #y_trimmed, idx = librosa.effects.trim(y)
+    y_trimmed = y.copy()
     # add hpss for comparison, use harmonic (h)
     h,p = librosa.effects.hpss(y_trimmed)
     ####### great code
@@ -101,9 +117,9 @@ import config as cfg
 ### end of test.py imports
 
 # for constants
-start = 1.40#0.5#1.39
-end = 1.45#10.5#1.41
-increment = 0.1#0.005
+start = 1.4#1.385#0.5#1.39
+end = 1.41#1.390#10.5#1.41
+increment = 0.1#0.005#0.005
 for duration in np.arange(start,end,increment):
     cfg.TIME_SEG = duration
     ### data_all.py
@@ -136,7 +152,8 @@ for duration in np.arange(start,end,increment):
                     x = raw[start:end]
                     y = np.zeros(cfg.N_CLASS)
                     y[lbl] = 1
-                    x = extract_logmel(x, sr, size=cfg.TIME_SEG)
+                    #x = extract_logmel(x, sr, size=cfg.TIME_SEG)
+                    x = extract_mfcc(x,sr,cfg.TIME_SEG)
                     data.append((x, y))
         print(len(data))
 
@@ -171,7 +188,8 @@ for duration in np.arange(start,end,increment):
                 end = start + seg
                 if end <= length:
                     x = raw[start:end]
-                    x = extract_logmel(x, sr, size=cfg.TIME_SEG)
+                    #x = extract_logmel(x, sr, size=cfg.TIME_SEG)
+                    x = extract_mfcc(x,sr,size=cfg.TIME_SEG)
                     temp.append(x)
             data[file] = np.array(temp)
 
@@ -208,7 +226,8 @@ for duration in np.arange(start,end,increment):
                     x = raw[start:end]
                     y = np.zeros(cfg.N_CLASS)
                     y[lbl] = 1
-                    x = extract_logmel(x, sr, size=cfg.TIME_SEG)
+                    #x = extract_logmel(x, sr, size=cfg.TIME_SEG)
+                    x = extract_mfcc(x,sr,size=cfg.TIME_SEG)
                     data.append((x, y))
         print(len(data))
 
